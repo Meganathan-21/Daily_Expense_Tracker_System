@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Expense Tracker</title>
+    <style>
+        /* Add your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 10px;
+        }
+        input[type="text"], input[type="number"] {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Expense Tracker</h1>
+        <form id="expenseForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            <label for="expenseName">Expense Name:</label>
+            <input type="text" id="expenseName" name="expenseName" required>
+            <label for="expenseAmount">Amount:</label>
+            <input type="number" id="expenseAmount" name="expenseAmount" min="0" step="0.01" required>
+            <input type="submit" value="Add Expense">
+        </form>
+        <table id="expenseTable">
+            <thead>
+                <tr>
+                    <th>Expense Name</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody id="expenseTableBody">
+                <!-- Expense items will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            loadExpenses();
+
+            document.getElementById("expenseForm").addEventListener("submit", function(event) {
+                event.preventDefault();
+                
+                var name = document.getElementById("name").value;
+                var expenseName = document.getElementById("expenseName").value;
+                var expenseAmount = document.getElementById("expenseAmount").value;
+                
+                var currentDate = new Date();
+                var expenseDate = currentDate.toISOString().slice(0,10);
+                var expenseTime = currentDate.toTimeString().slice(0,5);
+                
+                var expense = {
+                    name: name,
+                    expenseName: expenseName,
+                    amount: expenseAmount,
+                    date: expenseDate,
+                    time: expenseTime
+                };
+
+                addExpenseToTable(expense);
+
+                saveExpense(expense);
+
+                document.getElementById("name").value = "";
+                document.getElementById("expenseName").value = "";
+                document.getElementById("expenseAmount").value = "";
+            });
+        });
+
+        function loadExpenses() {
+            var expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+            expenses.forEach(function(expense) {
+                addExpenseToTable(expense);
+            });
+        }
+
+        function saveExpense(expense) {
+            var expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+            expenses.push(expense);
+            localStorage.setItem('expenses', JSON.stringify(expenses));
+        }
+
+        function addExpenseToTable(expense) {
+            var tableBody = document.getElementById("expenseTableBody");
+            var row = tableBody.insertRow();
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
+            var cell4 = row.insertCell(3);
+            cell1.textContent = expense.expenseName;
+            cell2.textContent = expense.amount;
+            cell3.textContent = expense.date;
+            cell4.textContent = expense.time;
+        }
+    </script>
+</body>
+</html>
